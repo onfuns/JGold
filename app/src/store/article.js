@@ -1,6 +1,6 @@
 import { observable, action } from 'mobx'
 import { ArticleService } from '../actions'
-import { getCache } from '../utils/util'
+import { saveCache, getCache } from '../utils/util'
 const { getCategoryApi, getArticleByTimeLineApi, getArticleByRankLineApi, getArticleByCommentApi,
   getArticleByPeriodWeekApi, getArticleByPeriodMonthApi, getArticleByHotApi
 } = ArticleService
@@ -11,14 +11,13 @@ class Article {
     const localArticleList = getCache('local-article-list') || []
     return list.map(item => {
       const index = localArticleList.findIndex(l => l.objectId === item.objectId)
-      item.isConnect = index > 0 ? true : false
+      item.isConnect = index > -1 ? true : false
       return item
     })
   }
 
   @observable articleList = []
   @observable categoryList = []
-
   @observable loading = false
 
   @action
@@ -50,6 +49,7 @@ class Article {
       this.loading = false
     }
   }
+
   getCategoryList = async () => {
     try {
       const { d: { categoryList = [] } = {} } = await getCategoryApi()
@@ -59,15 +59,30 @@ class Article {
     }
     return this.categoryList
   }
+
   clearArticleList = () => {
     this.articleList = []
   }
+
   updateArticle = (id, flag) => {
     const index = this.articleList.findIndex(item => item.objectId === id)
     this.articleList[index].isConnect = flag
   }
+
   clearCollectList = () => {
     this.articleList = this.compareLocalList(this.articleList)
+  }
+
+  collectArticle = ({ objectId, originalUrl, title, createdAt, isConnect = false }) => {
+    let localArticleList = getCache('local-article-list') || []
+    const index = localArticleList.findIndex(l => l.objectId === objectId)
+    if (index > -1) {
+      localArticleList.splice(index, 1)
+    } else {
+      localArticleList.unshift({ objectId, originalUrl, title, createdAt, isConnect: true })
+    }
+    this.updateArticle(objectId, !isConnect)
+    saveCache('local-article-list', localArticleList)
   }
 }
 

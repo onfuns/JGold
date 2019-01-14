@@ -7,7 +7,7 @@ import Footer from './Footer'
 import CollectModal from './CollectModal'
 import './style.less'
 import moment from 'moment'
-import { debounce, saveCache, getCache } from '../utils/util'
+import { debounce } from '../utils/util'
 moment.locale('zh-cn')
 const TabPane = Tabs.TabPane;
 
@@ -53,18 +53,8 @@ class ArticleList extends Component {
   }
 
   onCollect = (item) => {
-    const { objectId, originalUrl, title, createdAt, isConnect = false } = item
-    let localArticleList = getCache('local-article-list') || []
-    const index = localArticleList.findIndex(l => l.objectId === objectId)
-    if (index > -1) {
-      localArticleList[index].isConnect = !isConnect
-    } else {
-      localArticleList.push({ objectId, originalUrl, title, createdAt, isConnect: true })
-    }
-    this.store.updateArticle(objectId, !isConnect)
-    saveCache('local-article-list', localArticleList)
+    this.store.collectArticle(item)
   }
-
 
   render() {
     const { articleList, categoryList, loading } = this.store

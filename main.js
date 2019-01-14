@@ -27,7 +27,7 @@ const menuTemplate = [
     submenu: [
       {
         label: '关于',
-        click() { electron.shell.openExternal('https://github.com/onfuns/juejin-client') }
+        click() { electron.shell.openExternal('https://github.com/onfuns/JGold') }
       }
     ]
   }
