@@ -16,7 +16,9 @@ Webpack4 + React16 +Mobx5 + Antd
 
 <img src="https://github.com/onfuns/JGold/raw/master/screenshots/collect.png"  width="300"/>
 
+### Mac客户端下载地址
 
+[mac客户端下载](https://github.com/onfuns/JGold/raw/master/JGold.zip)
 
 ### 开发
 npm run start  
